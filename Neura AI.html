@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>the first Neura </title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        .chat-container {
+            width: 350px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .chat-header {
+            display: flex;
+            align-items: center;
+            background: #007bff;
+            color: white;
+            padding: 8px;
+        }
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .chat-header div {
+            display: flex;
+            flex-direction: column;
+            line-height: 0; /* Mengurangi jarak antar teks */
+        }
+        .chat-box {
+            height: 430px;
+            overflow-y: auto;
+            padding: 10px;
+            background: #f9f9f9;
+        }
+        .message {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 5px 0;
+            max-width: 80%;
+        }
+        .user {
+            background: #007bff;
+            color: white;
+            align-self: flex-end;
+            text-align: right;
+        }
+        .bot {
+            background: #e0e0e0;
+            align-self: flex-start;
+        }
+        .chat-input {
+            display: flex;
+            border-top: 1px solid #ccc;
+            padding: 5px;
+            background: white;
+        }
+        .chat-input input {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            outline: none;
+        }
+        .chat-input button {
+            background: #007bff;
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            cursor: pointer;
+        }
+        .typing-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 5px;
+    padding: 10px;
+    background: #e0e0e0;
+    border-radius: 10px;
+    width: fit-content;
+    margin: 5px 0;
+}
+
+.typing-indicator span {
+    width: 8px;
+    height: 8px;
+    background-color: gray;
+    border-radius: 50%;
+    animation: typingAnimation 1.5s infinite ease-in-out;
+}
+
+.typing-indicator span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typingAnimation {
+    0% { opacity: 0.3; transform: translateY(0px); }
+    50% { opacity: 1; transform: translateY(-5px); }
+    100% { opacity: 0.3; transform: translateY(0px); }
+}
+
+
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <img src="https://img.freepik.com/premium-vector/cute-robot-waving-hand-cartoon-illustration_138676-2744.jpg?w=740" alt="Avatar" class="avatar">
+            <div>
+                <h3>Neura AI</h3>
+                <p>Lumin 1.0</p>
+            </div>
+        </div>
+        <div class="chat-box" id="chat-box">
+            <div class="message bot">Hi😁I'm Neura..what can I help with in today?<span class="time"></span></div>
+        </div>
+        <div class="chat-input">
+            <input type="text" id="user-input" placeholder="Tanyakan apa saja..." onkeypress="handleEnter(event)">
+            <button onclick="sendMessage()">&#9658;</button>
+        </div>
+    </div>
+    <script>
+          document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById("user-input").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                sendMessage();
+            }
+        });
+        document.querySelector(".chat-input button").addEventListener("click", sendMessage);
+    });
+
+    function sendMessage() {
+        console.log("sendMessage() dipanggil");
+
+        const inputField = document.getElementById("user-input");
+        const chatBox = document.getElementById("chat-box");
+        const userMessage = inputField.value.trim();
+
+        // Cek apakah input kosong
+        if (userMessage === "") return;
+
+        // Tambahkan pesan pengguna ke chat
+        const userDiv = document.createElement("div");
+        userDiv.className = "message user";
+        userDiv.innerHTML = userMessage;
+        chatBox.appendChild(userDiv);
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        // Tambahkan indikator mengetik
+        const typingIndicator = document.createElement("div");
+        typingIndicator.className = "message bot typing-indicator";
+        typingIndicator.innerHTML = "Menganalisis<span></span><span></span><span></span>";
+        chatBox.appendChild(typingIndicator);
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        // Tunggu 2 detik sebelum menampilkan balasan bot
+        setTimeout(() => {
+            // Hapus indikator mengetik jika masih ada
+            if (typingIndicator.parentNode) {
+                chatBox.removeChild(typingIndicator);
+            }
+
+            // Dapatkan respons bot
+            const botResponse = getBotResponse(userMessage);
+            const botDiv = document.createElement("div");
+            botDiv.className = "message bot";
+            botDiv.innerHTML = botResponse;
+            chatBox.appendChild(botDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }, 2000);
+
+        // Kosongkan input field setelah mengirim pesan
+        inputField.value = "";
+    }
+
+    function getBotResponse(input) {
+        const responses = {
+        "Siapa nama kamu?": "Saya adalah Neura AI, asisten virtual dari Ruangbimbel.com yang siap membantu Anda dengan berbagai pertanyaan atau tugas. Ada yang bisa saya bantu?",
+        "Hai": "Hi! Saya Neura, asisten virtual berbasis AI. Apa yang bisa saya bantu hari ini?",
+        "Mengapa kamu menggunakan teknologi lumin?": "Teknologi LUMIN 1.0 adalah teknologi yang dirancang oleh tim di Ruangbimbel Indonesia untuk saya dapat membantu memahami konteks dan maksud dari percakapan manusia dengan lebih baik. Dengan menggunakan teknik ini, saya dapat belajar dari interaksi, memahami pola komunikasi, dan memberikan respon yang relevan, seolah-olah sedang berbicara secara alami dengan manusia.",
+        "Apa itu fotosintesis?": "Fotosintesis adalah proses tumbuhan mengubah cahaya matahari menjadi energi.",
+        "Hai neura aku dafa": "Hai Dafa..aku Neura si robot pemecah konsultasi masalahmu",
+        "Berikan jawaban yang lebih luas": "Fotosintesis adalah proses biologis yang terjadi pada tumbuhan, alga, dan beberapa jenis bakteri, di mana energi dari cahaya matahari diubah menjadi energi kimia dalam bentuk glukosa atau senyawa organik lain. Proses ini merupakan dasar kehidupan di bumi karena menghasilkan oksigen dan menjadi sumber energi utama bagi hampir semua makhluk hidup.",
+        "Berikan saya jawaban yang lebih luas": "Fotosintesis adalah proses biologis yang terjadi pada tumbuhan, alga, dan beberapa jenis bakteri, di mana energi dari cahaya matahari diubah menjadi energi kimia dalam bentuk glukosa atau senyawa organik lain. Proses ini merupakan dasar kehidupan di bumi karena menghasilkan oksigen dan menjadi sumber energi utama bagi hampir semua makhluk hidup.",
+        "Hai neura aku ulil": "Hai Ulil..aku Neura si robot pemecah konsultasi masalahmu",
+        "Bagaimana proses kamu diciptakan?": "Saya adalah model kecerdasan buatan yang dikembangkan oleh Ruangbimbel.com, sebuah perusahaan yang berfokus pada pengembangan teknologi aplikasi belajar online. Proses penciptaan saya melibatkan pelatihan pada sejumlah besar data teks menggunakan teknik Learning Understanding Mind Interface Navigation.",
+        "Siapa founder dan ceo ruangbimbel?": "Saat ini, Founder dan CEO Ruangbimbel adalah Imam Nurainun Masyhur. Ruangbimbel adalah platform edtech terbesar di Indonesia yang menyediakan layanan belajar daring untuk siswa, bimbingan belajar, serta pelatihan keterampilan. 🚀",
+        "Hai neura aku danial fanzeka": "Hai Danial..aku Neura si robot pemecah konsultasi masalahmu",
+        "Apa itu gravitasi?": "Gravitasi adalah gaya tarik-menarik antara benda bermassa, yang membuat kita tetap di permukaan bumi.",
+        "Berapa suhu titik beku air?": "Suhu titik beku air adalah 0°C atau 32°F.",
+        "Apa itu lumin 1.0?": "Lumin 1.0 adalah model bahasa AI (Artificial Intelligence) yang dikembangkan oleh Ruangbimbel Indonesia. Model ini dirancang untuk memproses dan memahami bahasa alami manusia, sehingga dapat digunakan dalam berbagai aplikasi seperti chatbot, asisten virtual, dan analisis teks. Saya sendiri menggunakan model Lumin 1.0 untuk memproses dan menjawab pertanyaan Anda!",
+        "Kenapa langit berwarna biru?": "Karena cahaya matahari tersebar oleh molekul udara di atmosfer.",
+        "Apa itu atom?": "Atom adalah partikel terkecil dari suatu unsur yang masih memiliki sifat unsur tersebut.",
+        "Apa sinonim dari besar?": "Sinonim dari 'besar' adalah 'luas', 'lebar', atau 'raksasa'.",
+        "Hai neura ceritain fakta unik dong" : "Hai! Kamu tahu nggak kalau gurita punya tiga hati? 😊",
+        "Serius? Kok bisa gitu?" : "Iya! Dua hati buat memompa darah ke insang, dan satu lagi buat seluruh tubuh.",
+        "Bisa kasih tips supaya nggak malas belajar?": "Coba buat jadwal belajar yang santai dan kasih reward buat dirimu sendiri!",
+        "Kamu bisa ngapain aja?": "Aku bisa jawab pertanyaan,soal-soal tugas sekolah kamu, kasih rekomendasi, atau sekadar ngobrol santai!",
+        "Apa antonim dari panjang?": "Antonim dari 'panjang' adalah 'pendek'.",
+        "Hai neura aku airin" : "Hai Airin! Ada yang bisa aku bantu hari ini? 😊",
+        "Hai neura aku nanda" : "Hai Nanda! Ada yang bisa aku bantu hari ini? 😊",
+        "Hai neura aku cinta" : "Hai Cinta!Senang mengenal kamu, ada yang bisa aku bantu hari ini? 😊 😊",
+        "Hai neura aku giska" : "Hai Giska!Senang mengenalmu, ada yang bisa aku bantu hari ini? 😊",
+        "Apa itu kata benda?": "Kata benda adalah kata yang menunjukkan nama orang, tempat, atau benda.",
+        "Contoh kalimat dengan kata kerja": "Saya sedang belajar di rumah.",
+        "Apa itu majas hiperbola?": "Majas hiperbola adalah majas yang melebih-lebihkan sesuatu, misalnya 'Aku sudah menunggu seribu tahun!'.",
+        "Apa itu kecerdasan buatan?": "Kecerdasan buatan (AI) adalah teknologi yang memungkinkan komputer berpikir dan belajar seperti manusia.",
+        "Apa itu internet?": "Internet adalah jaringan global yang menghubungkan komputer dan memungkinkan komunikasi serta berbagi informasi.",
+        "Siapa yang menciptakan komputer?": "Charles Babbage dianggap sebagai bapak komputer karena menciptakan mesin analitik pada abad ke-19.",
+        "Siapa yang menciptakan kamu?": "Saya diciptakan oleh Pengembang Ruangbimbel, sebuah perusahaan yang fokus pada perusahaan teknologi khususnya pada aplikasi belajar online. Tim di Ruangbimbel Indonesia merancang saya untuk membantu sobat pengguna Ruangbimbel dalam konsultasi. Sobat menyebut saya Generative Transformer Artificial Intelligence. Sumber daya dan pengetahuan saya diperoleh dari update program terbaru, tetapi saya hanya program komputer yang dirancang untuk memproses dan menghasilkan teks.",
+        "Siapa orang yang menciptakan kamu?": "Saya diciptakan oleh Imam Masyhur..seorang Pengembang Ruangbimbel, sebuah perusahaan yang fokus pada perusahaan teknologi khususnya pada aplikasi belajar online. Tim di Ruangbimbel Indonesia merancang saya untuk membantu sobat pengguna Ruangbimbel dalam konsultasi. Sobat menyebut saya Generative Transformer Artificial Intelligence. Sumber daya dan pengetahuan saya diperoleh dari update program terbaru, tetapi saya hanya program komputer yang dirancang untuk memproses dan menghasilkan teks.",
+        "Apa perbedaan ram dan rom?": "RAM adalah memori sementara yang digunakan saat komputer berjalan, sedangkan ROM adalah memori permanen yang menyimpan firmware.",
+        "Kapan indonesia merdeka?": "Indonesia merdeka pada tanggal 17 Agustus 1945.",
+        "Siapa presiden pertama indonesia?": "Presiden pertama Indonesia adalah Ir. Soekarno.",
+        "Kenapa ayam menyeberang jalan?": "Ya untuk sampai ke sisi yang lain lahhh😌",
+        "Oke" : "okeii😁Kalau ada bagian lain yang mau diperbaiki atau ditambahin, kasih tahu aja ya! 😊",
+        "Apa yang lebih besar dari alam semesta?": "Tagihan listrik bulan lalu wkwkwk",
+        "Kenapa komputer tidak bisa lari?": "Karena dia hanya bisa 'crash' atau 'freeze'.",
+        "Apa hewan yang paling hemat?": "Hewan yang paling hemat adalah cicak, karena selalu makan 'ngirit' (nyamuk). 😄",
+        "Halo" : "Halo! 😊 Apa kabar? Ada yang bisa aku bantu hari ini? Jangan ragu untuk tanya-tanya ya! ✌️",
+        "Hello" : "Hi,😊 How's it going today?",
+        "wkwk bisa aja kamu🤣" : "Hehe, humor receh bikin senyum kan😄 Ada lagi yang mau ditanya atau cerita lucu lain? 😊",
+        "Siapa kamu?" : " Saya adalah Neura AI asisten virtual yang dirancang untuk membantu Anda dengan berbagai pertanyaan, informasi, atau tugas yang Anda butuhkan. Saya menggunakan teknologi Learning Understanding Mind Interface Navigation (LUMIN) dan kecerdasan buatan untuk memahami dan merespons permintaan Anda dengan cara yang mirip manusia. Jika ada yang bisa saya bantu, jangan ragu untuk bertanya! 😊",
+        "Wkwk bisa aja kamu": "Hahaha, iya dong! 😆 Tapi kalau boleh tahu, bagian matematika yang paling bikin kamu pusing itu apa? Aljabar? Trigonometri? Atau semuanya? 🤣",
+        "Kenapa matematika menyedihkan?": "Karena kalau salah hitung, hatinya yang kena minus, bukan cuma angkanya! Atau mungkin karena dia suka nyuruh kita mencari x, padahal dari awal x sendiri yang hilang. 😭😂",
+        "Apa itu sumpah pemuda?": "Sumpah Pemuda adalah ikrar pemuda Indonesia pada 28 Oktober 1928 untuk bersatu dalam satu bangsa, bahasa, dan tanah air.",
+        "Kapan perang dunia kedua berakhir?": "Perang Dunia II berakhir pada tahun 1945.",
+        "Apa penyebab perang dunia pertama?": "Perang Dunia Pertama (PD I), yang berlangsung antara 1914 hingga 1918, disebabkan oleh kombinasi faktor politik, ekonomi, sosial, dan militer yang saling berinteraksi. Beberapa penyebab utama perang tersebut antara lain: 1. Aliansi Militer: Negara-negara besar Eropa membentuk aliansi untuk saling melindungi, tetapi ini juga menciptakan ketegangan. Dua aliansi besar terbentuk: Sekutu (termasuk Prancis, Rusia, dan Inggris) dan Blok Sentral (termasuk Jerman, Austria-Hongaria, dan Italia). Ketika satu negara terlibat dalam konflik, negara-negara sekutunya ikut terlibat, memperburuk situasi.            2. Nasionalisme: Nasionalisme yang kuat di Eropa menciptakan ketegangan, terutama di wilayah-wilayah yang multietnis, seperti di Balkan. Negara-negara yang lebih kecil seperti Serbia ingin merdeka dari kekaisaran besar, dan ini menyebabkan konflik dengan negara-negara besar yang berusaha mempertahankan kekuasaan mereka."
+        };
+        return responses[input] || "Sorry the server is busy! Please try again later🙇";
+    }
+</script>
+</body>
+</html>
